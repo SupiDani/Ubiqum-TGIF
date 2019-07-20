@@ -40,7 +40,8 @@ function createTable(x, data) {
     seniority.textContent = members[i].seniority;
     let voteswithparty = document.createElement("td");
     voteswithparty.textContent = members[i].votes_with_party_pct;
-    tr.append(count, name, party, state, seniority, voteswithparty); //tbody.appendChild(tr);
+    tr.append(count, name, party, state, seniority, voteswithparty);
+    tbody.appendChild(tr);
     //a.append(count, name, party, state, seniority, voteswithparty);
     //tr.appendChild(a);
 
@@ -94,11 +95,11 @@ function createDropdown(x, data) {
   }
 }
 
-let template = "";
+/*let template = "";
 for (let index = 0; index < array.length; index++) {
   const element = array[index];
 }
-
+*/
 // create Table the easy way:
 
 // 1. get element: //
@@ -141,7 +142,7 @@ members.forEach(member => {
 
 // create statistics
 
-let statistics = {
+/*let statistics = {
   reps: 0,
   rep_votes: 0,
   dems: 0,
@@ -188,3 +189,4 @@ function paintTable() {
     2
   );
 }
+*/
