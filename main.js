@@ -1,18 +1,47 @@
+// Define General variables:
+
 let allStates = [];
 let allStatesfiltered;
 let dropdown = document.getElementById("dropdown");
 let members = data.results[0].members;
+let setFilters = [];
+let selection = [members];
+let selectedState = ["All"];
+let filterByParty = [
+  document.getElementById("R"),
+  document.getElementById("D"),
+  document.getElementById("I")
+];
 
-createTable("congress-data", data);
-//document.write(allStates);
-console.log(allStates);
+// There were some issues with the checkbox on loading. workaround:
+
+checkDefaultParty();
+
+// Load all data:
+
+paintData();
+
+// Create Dropbown:
+
 createDropdown();
-console.log(allStates);
-console.log(allStatesfiltered);
+
+// Run Filter:
+
+runFilter();
+
+// Function to check status checkbox
+
+function checkDefaultParty() {
+  filterByParty.forEach(option => {
+    if ((option.checked = true)) {
+      setFilters.push(option.id);
+    }
+  });
+}
 
 // create table for members of
 
-function createTable(x, data) {
+function createTable(members) {
   let tbody = document.getElementById("tbody");
 
   for (let i = 0; i < members.length; i++) {
@@ -42,16 +71,12 @@ function createTable(x, data) {
     voteswithparty.textContent = members[i].votes_with_party_pct;
     tr.append(count, name, party, state, seniority, voteswithparty);
     tbody.appendChild(tr);
-    //a.append(count, name, party, state, seniority, voteswithparty);
-    //tr.appendChild(a);
 
     allStates.push(members[i].state);
-    //a.href = "#";
-    //a.className = "tr";
   }
 }
 
-function createDropdown(x, data) {
+function createDropdown() {
   let dropdown = document.getElementById("dropdown");
   allStates.sort(function(a, b) {
     var v = a.toLowerCase();
@@ -66,7 +91,7 @@ function createDropdown(x, data) {
   });
 
   // create list with states
-  var allStatesfiltered = [];
+  var allStatesfiltered = ["All"];
   for (let i = 0; i < allStates.length; i++) {
     if (allStates[i] != allStates[i + 1]) {
       allStatesfiltered.push(allStates[i]);
@@ -76,13 +101,6 @@ function createDropdown(x, data) {
   // create dorpdown list
 
   for (let i = 0; i < allStatesfiltered.length; i++) {
-    //let li = document.createElement("li");
-    //li.textContent = allStatesfiltered[i];
-    //let a = document.createElement("a");
-    //let linkText = allStatesfiltered[i];
-    //a.appendChild(linkText);
-    //a.href = "#";
-    //a.class="dropdown-item";
     let a = document.createElement("a");
     let linkText = document.createTextNode(allStatesfiltered[i]);
     a.appendChild(linkText);
@@ -90,9 +108,66 @@ function createDropdown(x, data) {
     a.className = "dropdown-item";
 
     dropdown.append(a);
-
-    //dropdown.append(li);
   }
+}
+
+function runFilter() {
+  let filterByStates = dropdown.childNodes;
+
+  // Filter for States
+
+  for (let i = 0; i < filterByStates.length; i++) {
+    filterByStates[i].addEventListener("click", setFilterState);
+    function setFilterState() {
+      let showDropStates = document.getElementById("dropStates");
+      showDropStates.innerHTML = filterByStates[i].firstChild.textContent;
+      selectedState = [];
+      selectedState.push(filterByStates[i].firstChild.textContent);
+      setFilter();
+    }
+  }
+
+  // Filter for Party
+
+  for (let i = 0; i < filterByParty.length; i++) {
+    filterByParty[i].addEventListener("click", setFilter);
+  }
+  function setFilter() {
+    setFilters = [];
+    if (filterByParty[0].checked) {
+      setFilters.push("R");
+    }
+    if (filterByParty[1].checked) {
+      setFilters.push("D");
+    }
+    if (filterByParty[2].checked) {
+      setFilters.push("I");
+    }
+    paintData();
+  }
+}
+
+//  Print table
+
+function paintData() {
+  selection = [];
+  members.forEach(member => {
+    if (selectedState == "All") {
+      setFilters.forEach(setFilter => {
+        if (member.party == setFilter) {
+          selection.push(member);
+        }
+      });
+    } else {
+      setFilters.forEach(setFilter => {
+        if (member.party == setFilter && member.state == selectedState) {
+          selection.push(member);
+        }
+      });
+    }
+  });
+  tbody.innerHTML = "";
+  createTable(selection);
 }
 
 /*let template = "";
